@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:youtube_app/core/secrets/app_secrets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:youtube_app/core/theme/theme.dart';
+import 'package:youtube_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:youtube_app/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:youtube_app/init_dependencies.main.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
 
-  await Supabase.initialize(
-    url: AppSecrets.supabaseUrl,
-    anonKey: AppSecrets.supabaseAnnonKey,
+  await initDependencies();
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => serviceLocator<AuthBloc>()),
+      ],
+      child: const MyApp(),
+    ),
   );
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
